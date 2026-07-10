@@ -12,6 +12,7 @@
 // altri widget, come scatole cinesi. Ogni blocco commentato qui
 // sotto corrisponde a un pezzo visivo preciso dello schermo.
 // ============================================================
+import 'Regole.dart';
 import 'Livello.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'Classifica.dart';
@@ -143,19 +144,23 @@ class HomePage extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 20),
-
-                    _MenuButton(
-                      label: 'LIVELLO',
-                      onPressed: () {
-                        debugPrint('Hai premuto LIVELLO');
-                      },
-                    ),
-                    const SizedBox(height: 20),
+                    //
+                    // _MenuButton(
+                    //   label: 'LIVELLO',
+                    //   onPressed: () {
+                    //     debugPrint('Hai premuto LIVELLO');
+                    //   },
+                    // ),
+                    // const SizedBox(height: 20),
 
                     _MenuButton(
                       label: 'REGOLE',
                       onPressed: () {
                         debugPrint('Hai premuto REGOLE');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegolePage()),
+                        );
                       },
                     ),
                   ],

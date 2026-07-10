@@ -116,7 +116,7 @@ class _LivelloPageState extends State<LivelloPage> {
                 ),
 
                 // --------------------------------------------
-                // BOTTONE NEXT
+                // BOTTONE START
                 // --------------------------------------------
                 // Visibile SOLO se è stato scelto un livello,
                 // stesso schema del bottone CONFERMA in Gioco.dart
@@ -154,7 +154,7 @@ class _LivelloPageState extends State<LivelloPage> {
                         );
                       },
                       child: const Text(
-                        'NEXT',
+                        'START',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
