@@ -12,6 +12,7 @@
 // altri widget, come scatole cinesi. Ogni blocco commentato qui
 // sotto corrisponde a un pezzo visivo preciso dello schermo.
 // ============================================================
+import 'package:flutter_svg/flutter_svg.dart';
 import 'Classifica.dart';
 import 'Gioco.dart';
 import 'package:flutter/material.dart';
@@ -82,22 +83,10 @@ class HomePage extends StatelessWidget {
                     //     height: 100,
                     //   ),
                     //
-                    Container(
+                    SvgPicture.asset(
+                      'assets/images/LogoApp.svg', // <-- cambia con il nome esatto del tuo file
                       width: 100,
                       height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.buttonFill,
-                        border: Border.all(
-                          color: AppColors.buttonBorder,
-                          width: 2,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.image, // icona segnaposto "immagine"
-                        color: AppColors.titleText,
-                        size: 40,
-                      ),
                     ),
 
                     const SizedBox(height: 16), // spazio vuoto tra logo e titolo
@@ -107,7 +96,7 @@ class HomePage extends StatelessWidget {
                       'Brain Snack', // <-- sostituisci con il nome della tua app
                       style: TextStyle(
                         color: AppColors.titleText,
-                        fontSize: 32,
+                        fontSize: 48,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2, // spazio tra le lettere, effetto "titolo"
                       ),
