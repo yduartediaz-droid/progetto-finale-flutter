@@ -4,10 +4,15 @@
 // Questa pagina mostra una domanda del quiz con 4 risposte.
 // Quando selezioni una risposta, il bottone "CONFERMA" appare.
 // Le risposte sono disposte in coppia (2 per riga).
+//
+// Al click su CONFERMA, la risposta scelta viene confrontata con
+// quella corretta, e si apre RisultatoPage passando l'esito
+// (vittoria/sconfitta).
 // ============================================================
 
 import 'package:flutter/material.dart';
 import 'AppColors.dart';
+import 'Risultato.dart'; // <-- import aggiunto per collegare la pagina Risultato
 
 // ============================================================
 // StatefulWidget
@@ -31,6 +36,17 @@ class _GiocoPageState extends State<GiocoPage> {
   // Quando l'utente tocca un bottone, questa variabile cambia.
   // ============================================================
   String? rispostaSelezionata;
+
+  // ============================================================
+  // Risposta corretta per la domanda attuale
+  // ------------------------------------------------------------
+  // Per ora scritta a mano (dati finti), coerente con la domanda
+  // fissa "Qual è la capitale dell'Irlanda?" qui sotto.
+  // Quando collegherete il backend, questo valore arriverà dai
+  // dati veri della domanda (DomandaEntity -> risposta con
+  // corretta = true), invece di essere scritto a mano qui.
+  // ============================================================
+  final String rispostaCorretta = "Dublino";
 
   @override
   Widget build(BuildContext context) {
@@ -195,8 +211,23 @@ class _GiocoPageState extends State<GiocoPage> {
                         ),
                       ),
 
+                      // --------------------------------------------------------
+                      // MODIFICATO: prima faceva solo un debugPrint.
+                      // Ora confrontiamo la risposta scelta con quella corretta,
+                      // e navighiamo verso RisultatoPage passando l'esito.
+                      // --------------------------------------------------------
                       onPressed: () {
-                        debugPrint("Hai confermato: $rispostaSelezionata");
+                        // true se l'utente ha scelto la risposta giusta
+                        final bool haVinto =
+                            rispostaSelezionata == rispostaCorretta;
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                RisultatoPage(isWin: haVinto),
+                          ),
+                        );
                       },
 
                       child: const Text(
