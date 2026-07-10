@@ -1,5 +1,7 @@
+import 'package:brain_snack/pages/Risultato.dart';
+import 'package:brain_snack/pages/Gioco.dart';
 import 'package:flutter/material.dart';
-import 'pages/Home.dart'; // <-- importiamo la TUA Home page (logo+titolo+4 bottoni)
+import 'pages/Home.dart';
 
 // ============================================================
 // PUNTO DI INGRESSO DELL'APP
@@ -37,6 +39,8 @@ class MyApp extends StatelessWidget {
       // definita in lib/pages/Home.dart
       // ----------------------------------------------------
       home: const HomePage(),
+
+
     );
   }
 }
