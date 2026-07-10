@@ -1,45 +1,61 @@
-
+import 'package:brain_snack/pages/Risultato.dart';
 import 'package:brain_snack/pages/Gioco.dart';
-
-
 import 'package:flutter/material.dart';
+import 'pages/Home.dart';
 
-
+// ============================================================
+// PUNTO DI INGRESSO DELL'APP
+// ------------------------------------------------------------
+// runApp() è la prima cosa che viene eseguita: dice a Flutter
+// "disegna sullo schermo il widget MyApp e tutto quello che
+// contiene". Da qui parte tutta la costruzione dell'interfaccia.
+// ============================================================
 void main() {
   runApp(const MyApp());
 }
 
+// ============================================================
+// MyApp — la "radice" dell'applicazione
+// ------------------------------------------------------------
+// Questo widget non disegna nulla di visivo direttamente: si
+// occupa solo di configurare le impostazioni generali dell'app
+// (titolo, tema/colori globali, e QUALE PAGINA mostrare per prima).
+// ============================================================
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Brain Snack', // nome interno dell'app (non visibile a schermo)
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const GiocoPage(),
+
+      // ----------------------------------------------------
+      // QUESTA è la riga che decide la prima schermata mostrata.
+      // Prima puntava a "MyHomePage" (il contatore demo qui sotto,
+      // ora commentato), ora punta alla TUA HomePage reale,
+      // definita in lib/pages/Home.dart
+      // ----------------------------------------------------
+      home: const HomePage(),
+
+
     );
   }
 }
 
+// ============================================================
+// ------------------------------------------------------------
+// CODICE DI DEFAULT GENERATO DA FLUTTER (il "contatore demo")
+// ------------------------------------------------------------
+// Tenuto qui SOLO come riferimento/esempio didattico, non è più
+// collegato a nulla (MyApp ora usa HomePage, non MyHomePage).
+// Puoi studiarlo per capire pattern come StatefulWidget e
+// setState(), oppure eliminarlo del tutto quando non ti serve più.
+// ============================================================
+
+/*
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -107,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('You have pushed the button this many times:'),
             Text(
@@ -125,3 +141,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+*/
