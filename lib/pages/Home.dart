@@ -103,7 +103,7 @@ class HomePage extends StatelessWidget {
 
                     // ---- TESTO TITOLO ----
                     const Text(
-                      'TITOLO', // <-- sostituisci con il nome della tua app
+                      'Brain Snack', // <-- sostituisci con il nome della tua app
                       style: TextStyle(
                         color: AppColors.titleText,
                         fontSize: 32,
