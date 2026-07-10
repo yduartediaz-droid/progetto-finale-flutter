@@ -12,7 +12,8 @@
 // altri widget, come scatole cinesi. Ogni blocco commentato qui
 // sotto corrisponde a un pezzo visivo preciso dello schermo.
 // ============================================================
-
+import 'Classifica.dart';
+import 'Gioco.dart';
 import 'package:flutter/material.dart';
 import 'AppColors.dart'; // <-- importiamo i colori dal file separato
 
@@ -132,6 +133,10 @@ class HomePage extends StatelessWidget {
                         // Navigator.push(context, MaterialPageRoute(
                         //   builder: (context) => const GiocoPage(),
                         // ));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const GiocoPage()),
+                        );
                         debugPrint('Hai premuto GIOCA');
                       },
                     ),
@@ -140,7 +145,19 @@ class HomePage extends StatelessWidget {
                     _MenuButton(
                       label: 'CLASSIFICA',
                       onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ClassificaPage()),
+                        );
                         debugPrint('Hai premuto CLASSIFICA');
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    _MenuButton(
+                      label: 'LIVELLO',
+                      onPressed: () {
+                        debugPrint('Hai premuto LIVELLO');
                       },
                     ),
                     const SizedBox(height: 20),
@@ -149,14 +166,6 @@ class HomePage extends StatelessWidget {
                       label: 'REGOLE',
                       onPressed: () {
                         debugPrint('Hai premuto REGOLE');
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    _MenuButton(
-                      label: 'IMPOSTAZIONI',
-                      onPressed: () {
-                        debugPrint('Hai premuto IMPOSTAZIONI');
                       },
                     ),
                   ],
