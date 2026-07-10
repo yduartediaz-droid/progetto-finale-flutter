@@ -2,19 +2,29 @@
 // RISULTATO.DART
 // ------------------------------------------------------------
 // Schermata che mostra il risultato del quiz:
-//   - WIN  -> messaggio di vittoria
-//   - LOSE -> messaggio di sconfitta
+//   - WIN  -> messaggio di vittoria, bottone NEXT
+//   - LOSE -> messaggio di sconfitta, bottone TRY AGAIN
+//
+// Comportamento dei bottoni:
+//   - NEXT (vittoria)     -> apre una NUOVA domanda (per ora
+//     ricarica semplicemente GiocoPage da capo, dato che al
+//     momento esiste solo una domanda finta; quando arriverà
+//     la lista vera di domande, questa logica andrà aggiornata
+//     per passare alla domanda successiva reale)
+//   - TRY AGAIN (sconfitta) -> torna alla Home, ripulendo tutto
+//     lo stack di navigazione (niente freccia "indietro" verso
+//     Gioco/Risultato: si riparte pulito dalla Home)
 //
 // Struttura generale (come Home.dart):
 //   1) Sfondo con gradiente (AppColors.backgroundGradient)
 //   2) Titolo + sottotitolo centrati
 //   3) Pulsante neon (stile simile ai menu della Home)
-//
-// Usa SOLO i colori già presenti in AppColors.dart.
 // ============================================================
 
 import 'package:flutter/material.dart';
 import 'AppColors.dart';
+import 'Gioco.dart'; // <-- serve per riaprire una nuova domanda (bottone NEXT)
+import 'Home.dart';  // <-- serve per tornare alla Home (bottone TRY AGAIN)
 
 class RisultatoPage extends StatelessWidget {
   final bool isWin;
@@ -91,10 +101,59 @@ class RisultatoPage extends StatelessWidget {
                 // --------------------------------------------------------
                 // 4) PULSANTE NEON (stile identico ai bottoni della Home)
                 // --------------------------------------------------------
+                // MODIFICATO: prima faceva sempre Navigator.pop(context).
+                // Ora il comportamento dipende da isWin:
+                //   - isWin = true  -> bottone NEXT  -> nuova domanda
+                //   - isWin = false -> bottone TRY AGAIN -> torna alla Home
+                // --------------------------------------------------------
                 _ResultButton(
                   label: buttonText,
                   onPressed: () {
-                    Navigator.pop(context);
+                    if (isWin) {
+                      // ------------------------------------------------
+                      // CASO VITTORIA: NEXT -> nuova domanda
+                      // ------------------------------------------------
+                      // pushAndRemoveUntil sostituisce TUTTO lo stack
+                      // di navigazione con una nuova pagina, tranne le
+                      // route che soddisfano la condizione passata come
+                      // ultimo parametro.
+                      //
+                      // (route) => route.isFirst  significa: "tieni solo
+                      // la primissima pagina aperta (la Home)", tutto il
+                      // resto (il vecchio Gioco, il vecchio Risultato)
+                      // viene rimosso dallo stack.
+                      //
+                      // Risultato: stack finale = Home -> GiocoPage (nuova)
+                      // Quindi il tasto "indietro" del telefono/browser
+                      // riporterebbe alla Home, non a un vecchio Risultato.
+                      //
+                      // NOTA: essendo la domanda ancora finta/fissa, la
+                      // "nuova" GiocoPage mostrerà la stessa identica
+                      // domanda. Quando ci sarà una lista vera di domande,
+                      // qui andrà passato invece l'indice della domanda
+                      // successiva, es. GiocoPage(indiceDomanda: i + 1).
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const GiocoPage(),
+                        ),
+                            (route) => route.isFirst,
+                      );
+                    } else {
+                      // ------------------------------------------------
+                      // CASO SCONFITTA: TRY AGAIN -> torna alla Home
+                      // ------------------------------------------------
+                      // (route) => false  significa: "non tenere NESSUNA
+                      // route esistente", quindi rimuove tutto lo stack
+                      // (Gioco, Risultato) e lascia solo la nuova Home.
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ),
+                            (route) => false,
+                      );
+                    }
                   },
                 ),
               ],
