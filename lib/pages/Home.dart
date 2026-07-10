@@ -12,7 +12,7 @@
 // altri widget, come scatole cinesi. Ogni blocco commentato qui
 // sotto corrisponde a un pezzo visivo preciso dello schermo.
 // ============================================================
-
+import 'Gioco.dart';
 import 'package:flutter/material.dart';
 import 'AppColors.dart'; // <-- importiamo i colori dal file separato
 
@@ -132,6 +132,10 @@ class HomePage extends StatelessWidget {
                         // Navigator.push(context, MaterialPageRoute(
                         //   builder: (context) => const GiocoPage(),
                         // ));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const GiocoPage()),
+                        );
                         debugPrint('Hai premuto GIOCA');
                       },
                     ),
