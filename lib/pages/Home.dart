@@ -12,6 +12,7 @@
 // altri widget, come scatole cinesi. Ogni blocco commentato qui
 // sotto corrisponde a un pezzo visivo preciso dello schermo.
 // ============================================================
+import 'Livello.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'Classifica.dart';
 import 'Gioco.dart';
@@ -124,7 +125,7 @@ class HomePage extends StatelessWidget {
                         // ));
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const GiocoPage()),
+                          MaterialPageRoute(builder: (context) => const LivelloPage()),
                         );
                         debugPrint('Hai premuto GIOCA');
                       },
