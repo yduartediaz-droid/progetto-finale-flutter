@@ -1,313 +1,187 @@
-// ============================================================
-// GIOCO.DART
-// ------------------------------------------------------------
-// Questa pagina mostra una domanda del quiz con 4 risposte.
-// Quando selezioni una risposta, il bottone "CONFERMA" appare.
-// Le risposte sono disposte in coppia (2 per riga).
-//
-// Al click su CONFERMA, la risposta scelta viene confrontata con
-// quella corretta, e si apre RisultatoPage passando l'esito
-// (vittoria/sconfitta).
-// ============================================================
-
 import 'package:flutter/material.dart';
+import '../models/domanda.dart';
+import '../services/quiz_service.dart';
+import 'Risultato.dart';
 import 'AppColors.dart';
-import 'Risultato.dart'; // <-- import aggiunto per collegare la pagina Risultato
 
-// ============================================================
-// StatefulWidget
-// ------------------------------------------------------------
-// Usiamo uno StatefulWidget perché la pagina deve CAMBIARE
-// quando l'utente seleziona una risposta.
-// Un StatelessWidget NON potrebbe aggiornare la grafica.
-// ============================================================
 class GiocoPage extends StatefulWidget {
-  const GiocoPage({super.key});
+  final String livello;
+
+  const GiocoPage({super.key, required this.livello});
 
   @override
   State<GiocoPage> createState() => _GiocoPageState();
 }
 
 class _GiocoPageState extends State<GiocoPage> {
-  // ============================================================
-  // Variabile che memorizza la risposta selezionata
-  // ------------------------------------------------------------
-  // All'inizio è null (nessuna risposta scelta).
-  // Quando l'utente tocca un bottone, questa variabile cambia.
-  // ============================================================
-  String? rispostaSelezionata;
+  List<Domanda>? domande;
+  int indice = 0;
+  int? rispostaSelezionata;
 
-  // ============================================================
-  // Risposta corretta per la domanda attuale
-  // ------------------------------------------------------------
-  // Per ora scritta a mano (dati finti), coerente con la domanda
-  // fissa "Qual è la capitale dell'Irlanda?" qui sotto.
-  // Quando collegherete il backend, questo valore arriverà dai
-  // dati veri della domanda (DomandaEntity -> risposta con
-  // corretta = true), invece di essere scritto a mano qui.
-  // ============================================================
-  final String rispostaCorretta = "Dublino";
+  int risposteCorrette = 0; // 🔥 NUOVO
+
+  @override
+  void initState() {
+    super.initState();
+    _caricaDomande();
+  }
+
+  Future<void> _caricaDomande() async {
+    try {
+      domande = await QuizService.getDomandeByLivello(widget.livello);
+      setState(() {});
+    } catch (e) {
+      debugPrint("Errore nel caricamento domande: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (domande == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final domanda = domande![indice];
+    final isLastQuestion = indice == domande!.length - 1;
+
     return Scaffold(
       body: Container(
-        // Il Container occupa tutto lo schermo
-        width: double.infinity,
-        height: double.infinity,
-
-        // Sfondo neon preso da AppColors
         decoration: const BoxDecoration(
           gradient: AppColors.backgroundGradient,
         ),
-
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-
-            // Colonna principale della pagina
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-
-                // ------------------------------------------------------------
-                // TITOLO DELLA PAGINA
-                // ------------------------------------------------------------
-                const Text(
-                  "DOMANDA",
-                  style: TextStyle(
-                    color: AppColors.titleText,
-                    fontSize: 28,
+                Text(
+                  "Domanda ${indice + 1}/${domande!.length}",
+                  style: const TextStyle(
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // ------------------------------------------------------------
-                // INDICATORE DI PROGRESSO
-                // ------------------------------------------------------------
-                const Text(
-                  "Domanda 1 di 10",
-                  style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 18,
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // ------------------------------------------------------------
-                // TESTO DELLA DOMANDA
-                // ------------------------------------------------------------
-                const Text(
-                  "Qual è la capitale dell’Irlanda?",
-                  style: TextStyle(
                     color: AppColors.titleText,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 30),
 
-                // ============================================================
-                // RISPOSTE IN COPPIA (2 per riga)
-                // ============================================================
-
-                Row(
-                  children: [
-                    // Risposta 1
-                    Expanded(
-                      child: _Risposta(
-                        testo: "Londra",
-                        selezionata: rispostaSelezionata == "Londra",
-                        onTap: () {
-                          // Aggiorniamo la risposta selezionata
-                          setState(() {
-                            rispostaSelezionata = "Londra";
-                          });
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(width: 16),
-
-                    // Risposta 2
-                    Expanded(
-                      child: _Risposta(
-                        testo: "Edimburgo",
-                        selezionata: rispostaSelezionata == "Edimburgo",
-                        onTap: () {
-                          setState(() {
-                            rispostaSelezionata = "Edimburgo";
-                          });
-                        },
-                      ),
-                    ),
-                  ],
+                Text(
+                  domanda.testo,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    color: Colors.white,
+                    height: 1.3,
+                  ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 40),
 
-                Row(
-                  children: [
-                    // Risposta 3
-                    Expanded(
-                      child: _Risposta(
-                        testo: "Dublino",
-                        selezionata: rispostaSelezionata == "Dublino",
-                        onTap: () {
-                          setState(() {
-                            rispostaSelezionata = "Dublino";
-                          });
-                        },
+                ...domanda.risposte.map((r) {
+                  final selected = rispostaSelezionata == r.idRispostaPk;
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        rispostaSelezionata = r.idRispostaPk;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.buttonFill,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: selected
+                              ? Colors.cyanAccent
+                              : AppColors.buttonBorder,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: selected
+                                ? Colors.cyanAccent.withOpacity(0.6)
+                                : AppColors.buttonGlow.withOpacity(0.4),
+                            blurRadius: 14,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        r.testo,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: selected
+                              ? Colors.cyanAccent
+                              : AppColors.buttonText,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-
-                    const SizedBox(width: 16),
-
-                    // Risposta 4
-                    Expanded(
-                      child: _Risposta(
-                        testo: "Parigi",
-                        selezionata: rispostaSelezionata == "Parigi",
-                        onTap: () {
-                          setState(() {
-                            rispostaSelezionata = "Parigi";
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                }),
 
                 const Spacer(),
 
-                // ============================================================
-                // BOTTONE CONFERMA
-                // ------------------------------------------------------------
-                // Appare SOLO quando l'utente ha selezionato una risposta.
-                // Se rispostaSelezionata è null → il bottone NON viene mostrato.
-                // ============================================================
-                if (rispostaSelezionata != null)
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.buttonFill,
-                        foregroundColor: AppColors.buttonText,
-                        elevation: 10,
-                        shadowColor: AppColors.buttonGlow,
-
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: const BorderSide(
-                            color: AppColors.buttonBorder,
-                            width: 2,
-                          ),
-                        ),
+                SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonBorder,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
+                      shadowColor: AppColors.buttonGlow,
+                      elevation: 10,
+                    ),
+                    onPressed: rispostaSelezionata == null
+                        ? null
+                        : () async {
+                            final rispostaCorretta = domanda.risposte
+                                .firstWhere((r) => r.idRispostaPk == rispostaSelezionata)
+                                .corretta;
 
-                      // --------------------------------------------------------
-                      // MODIFICATO: prima faceva solo un debugPrint.
-                      // Ora confrontiamo la risposta scelta con quella corretta,
-                      // e navighiamo verso RisultatoPage passando l'esito.
-                      // --------------------------------------------------------
-                      onPressed: () {
-                        // true se l'utente ha scelto la risposta giusta
-                        final bool haVinto =
-                            rispostaSelezionata == rispostaCorretta;
+                            if (rispostaCorretta) {
+                              risposteCorrette++; // 🔥 CONTEGGIO
+                            }
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                RisultatoPage(isWin: haVinto),
-                          ),
-                        );
-                      },
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RisultatoPage(
+                                  isWin: rispostaCorretta,
+                                  livello: widget.livello,
+                                  curiosita: domanda.curiosita,
+                                  isLastQuestion: isLastQuestion,
+                                  risposteCorrette: risposteCorrette, // 🔥
+                                  totaleDomande: domande!.length,     // 🔥
+                                ),
+                              ),
+                            );
 
-                      child: const Text(
-                        "CONFERMA",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
+                            if (result == true && !isLastQuestion) {
+                              setState(() {
+                                indice++;
+                                rispostaSelezionata = null;
+                              });
+                            }
+                          },
+                    child: const Text(
+                      "CONFERMA",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
                       ),
                     ),
                   ),
+                ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ============================================================
-// WIDGET RISPOSTA
-// ------------------------------------------------------------
-// Questo widget rappresenta UNA singola risposta del quiz.
-// Cambia colore quando è selezionata.
-// ============================================================
-class _Risposta extends StatelessWidget {
-  final String testo;        // Testo della risposta
-  final bool selezionata;    // True se l'utente l'ha selezionata
-  final VoidCallback onTap;  // Funzione chiamata quando tocchi il bottone
-
-  const _Risposta({
-    required this.testo,
-    required this.selezionata,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      // Quando tocchi il bottone, chiamiamo onTap
-      onTap: onTap,
-
-      child: Container(
-        padding: const EdgeInsets.all(16),
-
-        decoration: BoxDecoration(
-          // Se selezionata → colore diverso
-          color: selezionata
-              ? Colors.green.withOpacity(0.4) // colore selezione
-              : AppColors.buttonFill,         // colore normale
-
-          borderRadius: BorderRadius.circular(20),
-
-          border: Border.all(
-            color: selezionata
-                ? Colors.green // bordo selezionato
-                : AppColors.buttonBorder, // bordo normale
-            width: 2,
-          ),
-
-          boxShadow: [
-            BoxShadow(
-              color: selezionata
-                  ? Colors.green.withOpacity(0.6) // glow selezionato
-                  : AppColors.buttonGlow.withOpacity(0.6), // glow normale
-              blurRadius: 16,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-
-        child: Text(
-          testo,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: AppColors.buttonText,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
           ),
         ),
       ),
