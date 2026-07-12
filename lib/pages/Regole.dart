@@ -74,9 +74,9 @@ class RegolePage extends StatelessWidget {
                       titolo: 'Come si inizia',
                       corpo:
                       '1. Dalla Home, premi GIOCA per accedere alla selezione della partita\n'
-                          '2. Scegli la materia tra quelle disponibili\n'
-                          '3. Scegli il livello di difficoltà (FACILE / MEDIO / DIFFICILE)\n'
-                          '4. Premi START per iniziare',
+                         // '2. Scegli la materia tra quelle disponibili\n'
+                          '2. Scegli il livello di difficoltà (FACILE / MEDIO / DIFFICILE)\n'
+                          '3. Premi START per iniziare',
                     ),
 
                     _Paragrafo(
@@ -101,12 +101,12 @@ class RegolePage extends StatelessWidget {
                     _Paragrafo(
                       titolo: 'Svolgimento della partita',
                       corpo:
-                      '1. Le domande arrivano a blocchi da 10, caricate dal database in '
-                          'base a materia e livello scelti\n'
+                      '1. Le domande arrivano a blocchi da 10, in '
+                          'base al livello scelto\n'
                           '2. Per ogni domanda: risposta corretta → +2 punti e curiosità '
                           'mostrata; risposta sbagliata → -0.50 punti, si prosegue\n'
                           '3. Al termine del blocco, il giocatore può continuare (nuovo '
-                          'blocco da 10, stessa materia/livello) o fermarsi\n'
+                          'blocco da 10, stesso livello) o fermarsi\n'
                           '4. Il punteggio totale accumulato viene registrato in classifica',
                     ),
 
@@ -130,9 +130,9 @@ class RegolePage extends StatelessWidget {
                       titolo: 'Come si inizia',
                       corpo:
                       '1. Dalla Home, premi GIOCA per accedere alla selezione della partita\n'
-                          '2. Scegli la materia tra quelle disponibili\n'
-                          '3. Scegli il livello di difficoltà (FACILE / MEDIO / DIFFICILE)\n'
-                          '4. Premi START per iniziare',
+                          //'2. Scegli la materia tra quelle disponibili\n'
+                          '2. Scegli il livello di difficoltà (FACILE / MEDIO / DIFFICILE)\n'
+                          '3. Premi START per iniziare',
                     ),
 
                     _Paragrafo(
@@ -157,8 +157,8 @@ class RegolePage extends StatelessWidget {
                     _Paragrafo(
                       titolo: 'Svolgimento della partita',
                       corpo:
-                      '1. Le domande arrivano a blocchi da 10, caricate dal database in '
-                          'base a materia e livello scelti\n'
+                      '1. Le domande arrivano a blocchi da 10, verranno caricate in '
+                          'base al livello scelto\n'
                           '2. Per ogni domanda: risposta corretta → punti in base al livello '
                           'scelto + curiosità mostrata; risposta sbagliata → penalità in base '
                           'al livello scelto, si prosegue\n'
