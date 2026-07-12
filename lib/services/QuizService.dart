@@ -13,10 +13,18 @@ class QuizService {
   }
 
   static Future<List<Domanda>> getDomandeByLivello(String livello) async {
-    final url = Uri.parse("${baseUrl}/livello/$livello");
+    final url = Uri.parse("$baseUrl/livello/$livello");
     final response = await http.get(url);
 
-    final List list = jsonDecode(response.body);
-    return list.map((e) => Domanda.fromJson(e)).toList();
+    print("Hai premuto GIOCA");
+    print("Status code: ${response.statusCode}");
+    print("Body: ${response.body}");
+
+    if (response.statusCode != 200) {
+      throw Exception("Errore nel caricamento domande");
+    }
+
+    final List<dynamic> jsonList = jsonDecode(response.body);
+    return jsonList.map((e) => Domanda.fromJson(e)).toList();
   }
 }

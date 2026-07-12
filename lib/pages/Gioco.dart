@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/domanda.dart';
-import '../services/quiz_service.dart';
+import '../services/QuizService.dart';
 import 'Risultato.dart';
 import 'AppColors.dart';
 
@@ -17,8 +17,7 @@ class _GiocoPageState extends State<GiocoPage> {
   List<Domanda>? domande;
   int indice = 0;
   int? rispostaSelezionata;
-
-  int risposteCorrette = 0; // 🔥 NUOVO
+  int risposteCorrette = 0;
 
   @override
   void initState() {
@@ -65,9 +64,7 @@ class _GiocoPageState extends State<GiocoPage> {
                     color: AppColors.titleText,
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
                 Text(
                   domanda.testo,
                   style: const TextStyle(
@@ -76,16 +73,14 @@ class _GiocoPageState extends State<GiocoPage> {
                     height: 1.3,
                   ),
                 ),
-
                 const SizedBox(height: 40),
-
                 ...domanda.risposte.map((r) {
-                  final selected = rispostaSelezionata == r.idRispostaPk;
+                  final selected = rispostaSelezionata == r.idRisposta;
 
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        rispostaSelezionata = r.idRispostaPk;
+                        rispostaSelezionata = r.idRisposta;
                       });
                     },
                     child: Container(
@@ -123,9 +118,7 @@ class _GiocoPageState extends State<GiocoPage> {
                     ),
                   );
                 }),
-
                 const Spacer(),
-
                 SizedBox(
                   height: 56,
                   child: ElevatedButton(
@@ -142,11 +135,13 @@ class _GiocoPageState extends State<GiocoPage> {
                         ? null
                         : () async {
                             final rispostaCorretta = domanda.risposte
-                                .firstWhere((r) => r.idRispostaPk == rispostaSelezionata)
+                                .firstWhere(
+                                  (r) => r.idRisposta == rispostaSelezionata,
+                                )
                                 .corretta;
 
                             if (rispostaCorretta) {
-                              risposteCorrette++; // 🔥 CONTEGGIO
+                              risposteCorrette++;
                             }
 
                             final result = await Navigator.push(
@@ -157,8 +152,8 @@ class _GiocoPageState extends State<GiocoPage> {
                                   livello: widget.livello,
                                   curiosita: domanda.curiosita,
                                   isLastQuestion: isLastQuestion,
-                                  risposteCorrette: risposteCorrette, // 🔥
-                                  totaleDomande: domande!.length,     // 🔥
+                                  risposteCorrette: risposteCorrette,
+                                  totaleDomande: domande!.length,
                                 ),
                               ),
                             );
