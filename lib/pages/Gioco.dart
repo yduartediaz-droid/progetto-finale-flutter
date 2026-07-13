@@ -271,9 +271,20 @@ class _GiocoPageState extends State<GiocoPage> {
                   height: 56,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: ElevatedButton(
+                  /*  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonBorder,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      shadowColor: AppColors.buttonGlow,
+                      elevation: 10,
+                    ),*/
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.buttonBorder,
                       foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppColors.buttonBorder.withOpacity(0.25),
+                      disabledForegroundColor: Colors.white.withOpacity(0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
