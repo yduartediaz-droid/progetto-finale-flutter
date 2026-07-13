@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'AppColors.dart';
 import 'Home.dart';
+import 'Classifica.dart';
 
 class RisultatoFinale extends StatelessWidget {
   final int risposteCorrette;
@@ -81,6 +82,20 @@ class RisultatoFinale extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const HomePage(),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                _NeonButton(
+                  label: "VEDI CLASSIFICA",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ClassificaPage(),
                       ),
                     );
                   },
