@@ -25,7 +25,7 @@ class PageHeader extends StatelessWidget {
           // TITOLO (identico a prima, solo spostato dentro lo Stack)
           Padding(
             // spazio laterale per non far sovrapporre il testo alla freccia
-            padding: const EdgeInsets.symmetric(horizontal: 64),
+            padding: const EdgeInsets.symmetric(horizontal: 78),
             child: Text(
               title,
               textAlign: TextAlign.center,
