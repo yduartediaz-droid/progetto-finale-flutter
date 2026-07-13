@@ -21,83 +21,127 @@ class _LivelloPageState extends State<LivelloPage> {
           gradient: AppColors.backgroundGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Dimensioni responsive
+              final double w = constraints.maxWidth;
+              final double h = constraints.maxHeight;
 
-                // TITOLO + FRECCIA INDIETRO
-                const PageHeader(title: "Seleziona il livello"),
+              final double spacing = h * 0.03;       // spazi proporzionati
+              final double buttonHeight = h * 0.10;  // altezza bottoni
+              final double buttonWidth = w * 0.80;   // larghezza bottoni
 
-                const SizedBox(height: 40),
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
 
-                // FACILE
-                _LivelloButton(
-                  label: "FACILE",
-                  selected: livelloSelezionato == "FACILE",
-                  onTap: () {
-                    setState(() => livelloSelezionato = "FACILE");
-                  },
-                ),
-
-                // MEDIO
-                _LivelloButton(
-                  label: "MEDIO",
-                  selected: livelloSelezionato == "MEDIO",
-                  onTap: () {
-                    setState(() => livelloSelezionato = "MEDIO");
-                  },
-                ),
-
-                // DIFFICILE
-                _LivelloButton(
-                  label: "DIFFICILE",
-                  selected: livelloSelezionato == "DIFFICILE",
-                  onTap: () {
-                    setState(() => livelloSelezionato = "DIFFICILE");
-                  },
-                ),
-
-                const Spacer(),
-
-                // START BUTTON
-                if (livelloSelezionato != null)
-                  SizedBox(
-                    height: 56,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.buttonBorder,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        shadowColor: AppColors.buttonGlow,
-                        elevation: 10,
+                    // 🔙 FRECCIA INDIETRO
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white, size: 32),
+                        splashColor: Colors.white,
+                        highlightColor: Colors.white.withOpacity(0.3),
+                        onPressed: () => Navigator.pop(context),
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => GiocoPage(
-                              livello: livelloSelezionato!,
-                            ),
-                          ),
-                        );
-                      },
+                    ),
+
+                    SizedBox(height: spacing),
+
+                    // 🔠 TITOLO RESPONSIVE (non si scavalca mai)
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
                       child: const Text(
-                        "START",
+                        "Seleziona il livello",
                         style: TextStyle(
-                          fontSize: 20,
+                          color: Colors.white,
+                          fontSize: 36, // grande, ma FittedBox lo riduce se serve
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
+
+                    SizedBox(height: spacing * 2),
+
+                    // 🔘 FACILE
+                    SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: _LivelloButton(
+                        label: "FACILE",
+                        selected: livelloSelezionato == "FACILE",
+                        onTap: () => setState(() => livelloSelezionato = "FACILE"),
+                      ),
+                    ),
+
+                    SizedBox(height: spacing),
+
+                    // 🔘 MEDIO
+                    SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: _LivelloButton(
+                        label: "MEDIO",
+                        selected: livelloSelezionato == "MEDIO",
+                        onTap: () => setState(() => livelloSelezionato = "MEDIO"),
+                      ),
+                    ),
+
+                    SizedBox(height: spacing),
+
+                    // 🔘 DIFFICILE
+                    SizedBox(
+                      width: buttonWidth,
+                      height: buttonHeight,
+                      child: _LivelloButton(
+                        label: "DIFFICILE",
+                        selected: livelloSelezionato == "DIFFICILE",
+                        onTap: () => setState(() => livelloSelezionato = "DIFFICILE"),
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    // 🔥 START BUTTON (solo se selezionato)
+                    if (livelloSelezionato != null)
+                      SizedBox(
+                        height: 56,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.buttonBorder,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            shadowColor: AppColors.buttonGlow,
+                            elevation: 10,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => GiocoPage(
+                                  livello: livelloSelezionato!,
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "START",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -119,7 +163,6 @@ class _LivelloButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.buttonFill,
         borderRadius: BorderRadius.circular(30),
@@ -143,9 +186,9 @@ class _LivelloButton extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Center(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   label,
                   style: TextStyle(
