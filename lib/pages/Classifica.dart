@@ -1,87 +1,73 @@
 // ============================================================
 // CLASSIFICA.DART
 // ------------------------------------------------------------
-// Schermata che mostra la classifica dei giocatori, ordinata
-// dal punteggio PIÙ ALTO (posizione 1) al più basso (posizione n).
+// Ora la classifica è divisa per livello: l'utente sceglie
+// FACILE / MEDIO / DIFFICILE con i 3 bottoni in alto, e sotto
+// vede solo i giocatori che hanno giocato a quel livello,
+// ordinati dal punteggio più alto al più basso.
 //
-// Per ora i dati sono FINTI (scritti a mano nel codice, riga
-// "DATI DI ESEMPIO" più sotto). Quando collegherai il backend
-// Spring Boot, basterà sostituire quella lista con i dati veri
-// presi da una chiamata HTTP: la struttura della pagina resta
-// identica, cambia solo DA DOVE arrivano i dati.
+// I dati sono ancora FINTI (vedi "DATI DI ESEMPIO" più sotto).
+// Quando collegherai il backend Spring Boot, ogni giocatore
+// dovrà arrivare già con il campo "livello" valorizzato
+// (es. "FACILE", "MEDIO" o "DIFFICILE").
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'AppColors.dart'; // stessi colori usati nella Home, per coerenza grafica
+import 'AppColors.dart';
+import 'PageHeader.dart';
 
 // ------------------------------------------------------------
 // MODELLO DATI
 // ------------------------------------------------------------
-// Una piccola classe che rappresenta UN giocatore in classifica.
-// Non è un'Entity JPA come nel backend: qui è solo un "contenitore"
-// di dati usato lato Flutter per disegnare la lista a schermo.
-// ------------------------------------------------------------
 class Giocatore {
   final String nome;
   final int punteggio;
+  final String livello; // "FACILE" | "MEDIO" | "DIFFICILE"
 
   const Giocatore({
     required this.nome,
     required this.punteggio,
+    required this.livello,
   });
 }
 
 // ------------------------------------------------------------
-// StatelessWidget: per ora la pagina non deve "ricordarsi" di
-// nessun cambiamento nel tempo (i dati sono fissi), quindi
-// StatelessWidget va benissimo. Quando i dati arriveranno dal
-// backend (caricamento asincrono), la trasformeremo in
-// StatefulWidget: te lo spiego quando arriviamo a quel punto.
+// Ora StatefulWidget perché dobbiamo "ricordare" quale livello
+// è selezionato (parte da FACILE) e aggiornare la lista quando
+// l'utente tocca un altro bottone.
 // ------------------------------------------------------------
-class ClassificaPage extends StatelessWidget {
+class ClassificaPage extends StatefulWidget {
   const ClassificaPage({super.key});
 
+  @override
+  State<ClassificaPage> createState() => _ClassificaPageState();
+}
+
+class _ClassificaPageState extends State<ClassificaPage> {
+  String livelloSelezionato = "FACILE"; // livello mostrato di default all'apertura
+
   // ----------------------------------------------------------
-  // DATI DI ESEMPIO (finti)
+  // DATI (per ora vuoti: nessun nome finto)
   // ----------------------------------------------------------
-  // Lista scritta a mano, NON ancora ordinata di proposito:
-  // vogliamo dimostrare che l'ordinamento lo fa il codice sotto,
-  // non l'ordine in cui scrivi gli elementi qui.
+  // Quando collegherai il backend Spring Boot, questa lista
+  // andrà sostituita con i giocatori veri presi dall'API
+  // (ognuno con nome, punteggio e livello).
   // ----------------------------------------------------------
-  static const List<Giocatore> _datiFinti = [
-    Giocatore(nome: 'Walter', punteggio: 87),
-    Giocatore(nome: 'Emiliano', punteggio: 120),
-    Giocatore(nome: 'Angelo', punteggio: 45),
-    Giocatore(nome: 'Francesco', punteggio: 99),
-    Giocatore(nome: 'Marco P.', punteggio: 150),
-  ];
+  static const List<Giocatore> _datiFinti = [];
 
   @override
   Widget build(BuildContext context) {
-    // ----------------------------------------------------------
-    // ORDINAMENTO: dal punteggio più alto al più basso
-    // ----------------------------------------------------------
-    // List.from(...) crea una COPIA della lista originale: non
-    // modifichiamo mai direttamente _datiFinti (buona pratica,
-    // evita effetti collaterali imprevisti se il metodo build()
-    // viene chiamato più volte).
-    //
-    // sort() ordina la lista IN BASE al confronto che gli dai tu
-    // tra due elementi (a, b). Restituire:
-    //   - un numero negativo -> "a" viene prima di "b"
-    //   - un numero positivo -> "a" viene dopo "b"
-    //
-    // (b.punteggio - a.punteggio) ordina DAL PIÙ ALTO AL PIÙ BASSO.
-    // Se scrivessimo (a.punteggio - b.punteggio) sarebbe l'opposto
-    // (dal più basso al più alto).
-    final List<Giocatore> classificaOrdinata = List.from(_datiFinti)
+    // Filtra solo i giocatori del livello selezionato, poi ordina
+    // dal punteggio più alto al più basso.
+    final List<Giocatore> classificaFiltrata = _datiFinti
+        .where((g) => g.livello == livelloSelezionato)
+        .toList()
       ..sort((a, b) => b.punteggio - a.punteggio);
 
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        // Stesso sfondo a gradiente usato nella Home, preso da AppColors
         decoration: const BoxDecoration(
           gradient: AppColors.backgroundGradient,
         ),
@@ -89,41 +75,70 @@ class ClassificaPage extends StatelessWidget {
           child: Column(
             children: [
               // ------------------------------------------------
-              // TITOLO DELLA PAGINA
+              // TITOLO DELLA PAGINA + FRECCIA INDIETRO
               // ------------------------------------------------
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
-                child: Text(
-                  'CLASSIFICA',
-                  style: TextStyle(
-                    color: AppColors.titleText,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                  ),
+                child: PageHeader(
+                  title: 'CLASSIFICA',
+                  fontSize: 28,
+                  letterSpacing: 2,
                 ),
               ),
 
               // ------------------------------------------------
-              // LISTA DEI GIOCATORI
+              // 3 BOTTONI: FACILE / MEDIO / DIFFICILE
               // ------------------------------------------------
-              // Expanded dice al widget dentro (la ListView) di
-              // occupare TUTTO lo spazio verticale rimanente sotto
-              // il titolo. Senza Expanded, una ListView dentro una
-              // Column darebbe errore ("altezza non definita").
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _FiltroLivelloButton(
+                        label: "FACILE",
+                        selected: livelloSelezionato == "FACILE",
+                        onTap: () => setState(() => livelloSelezionato = "FACILE"),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _FiltroLivelloButton(
+                        label: "MEDIO",
+                        selected: livelloSelezionato == "MEDIO",
+                        onTap: () => setState(() => livelloSelezionato = "MEDIO"),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _FiltroLivelloButton(
+                        label: "DIFFICILE",
+                        selected: livelloSelezionato == "DIFFICILE",
+                        onTap: () => setState(() => livelloSelezionato = "DIFFICILE"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // ------------------------------------------------
+              // LISTA DEI GIOCATORI DEL LIVELLO SELEZIONATO
+              // ------------------------------------------------
               Expanded(
-                child: ListView.builder(
+                child: classificaFiltrata.isEmpty
+                    ? const Center(
+                  child: Text(
+                    "Nessun punteggio ancora registrato\nper questo livello.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                  ),
+                )
+                    : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  // Quanti elementi disegnare: uno per ogni giocatore
-                  itemCount: classificaOrdinata.length,
-                  // Questa funzione viene chiamata automaticamente
-                  // da Flutter per OGNI elemento della lista, passando
-                  // l'indice (index) di quell'elemento: 0, 1, 2, ...
+                  itemCount: classificaFiltrata.length,
                   itemBuilder: (context, index) {
-                    final Giocatore giocatore = classificaOrdinata[index];
-                    // La posizione in classifica è l'indice + 1
-                    // (l'indice della lista parte da 0, ma la
-                    // posizione mostrata all'utente parte da 1)
+                    final Giocatore giocatore = classificaFiltrata[index];
                     final int posizione = index + 1;
 
                     return _RigaClassifica(
@@ -143,13 +158,75 @@ class ClassificaPage extends StatelessWidget {
 }
 
 // ============================================================
+// _FiltroLivelloButton
+// ------------------------------------------------------------
+// Bottone piccolo "a pillola" per scegliere il livello da
+// visualizzare in classifica. Stesso stile cyan/viola degli
+// altri bottoni dell'app, ma pensato per stare 3 in fila.
+// ============================================================
+class _FiltroLivelloButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _FiltroLivelloButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.buttonFill,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: selected ? Colors.cyanAccent : AppColors.buttonBorder,
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: selected
+                ? Colors.cyanAccent.withOpacity(0.6)
+                : AppColors.buttonGlow.withOpacity(0.3),
+            blurRadius: 12,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Center(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: selected ? Colors.cyanAccent : AppColors.buttonText,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
 // _RigaClassifica
 // ------------------------------------------------------------
 // Widget "privato" (usato solo in questo file) che rappresenta
-// UNA singola riga della classifica: posizione + nome + punteggio,
-// con lo stesso stile "pillola neon" usato per i bottoni della Home.
-// Stesso motivo di prima: evitare di ripetere lo stesso codice
-// di stile per ogni riga della lista.
+// UNA singola riga della classifica: posizione + nome + punteggio.
 // ============================================================
 class _RigaClassifica extends StatelessWidget {
   final int posizione;
@@ -165,7 +242,7 @@ class _RigaClassifica extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16), // spazio tra una riga e l'altra
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.buttonFill,
@@ -182,11 +259,8 @@ class _RigaClassifica extends StatelessWidget {
           ),
         ],
       ),
-      // Row = mette gli elementi in fila ORIZZONTALE (a differenza
-      // di Column che li impila verticalmente)
       child: Row(
         children: [
-          // ---- Cerchietto con il numero di posizione ----
           Container(
             width: 36,
             height: 36,
@@ -196,7 +270,7 @@ class _RigaClassifica extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                '$posizione', // converte il numero intero in testo
+                '$posizione',
                 style: const TextStyle(
                   color: AppColors.titleText,
                   fontWeight: FontWeight.bold,
@@ -205,13 +279,7 @@ class _RigaClassifica extends StatelessWidget {
               ),
             ),
           ),
-
-          const SizedBox(width: 16), // spazio tra cerchio e nome
-
-          // ---- Nome del giocatore ----
-          // Expanded qui fa sì che il nome occupi tutto lo spazio
-          // orizzontale disponibile, spingendo il punteggio tutto
-          // a destra della riga.
+          const SizedBox(width: 16),
           Expanded(
             child: Text(
               nome,
@@ -222,8 +290,6 @@ class _RigaClassifica extends StatelessWidget {
               ),
             ),
           ),
-
-          // ---- Punteggio ----
           Text(
             '$punteggio pt',
             style: const TextStyle(

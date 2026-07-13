@@ -51,37 +51,33 @@ class RisultatoPage extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                // BOTTONE CURIOSITÀ
-                _NeonButton(
-                  label: "CURIOSITÀ",
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        backgroundColor: Colors.black.withOpacity(0.85),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        title: const Text(
-                          "Curiosità",
-                          style: TextStyle(
-                            color: Colors.cyanAccent,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        content: Text(
-                          curiosita,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            height: 1.4,
-                          ),
+// CURIOSITÀ MOSTRATA DIRETTAMENTE (niente più bottone/popup)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    children: [
+                      const Text(
+                        "CURIOSITÀ",
+                        style: TextStyle(
+                          color: Colors.cyanAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
                         ),
                       ),
-                    );
-                  },
+                      const SizedBox(height: 12),
+                      Text(
+                        curiosita,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-
                 const SizedBox(height: 20),
 
                 // SE NON È L’ULTIMA DOMANDA → MOSTRA "PROSSIMA DOMANDA"

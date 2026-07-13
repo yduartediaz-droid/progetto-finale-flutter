@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/Home.dart';
+import 'pages/AuthPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       ),
 
       // Prima schermata mostrata all’avvio
-      home: const HomePage(),
+      home: const AuthPage(),
     );
   }
 }
