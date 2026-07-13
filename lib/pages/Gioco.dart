@@ -314,6 +314,7 @@ class _GiocoPageState extends State<GiocoPage> {
                             isLastQuestion: isLastQuestion,
                             risposteCorrette: risposteCorrette,
                             totaleDomande: domande!.length,
+
                           ),
                         ),
                       );
