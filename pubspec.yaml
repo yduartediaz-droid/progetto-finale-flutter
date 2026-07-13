@@ -46,6 +46,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  # Dichiarazione dipendenza: dice a Flutter di scaricare questo pacchetto
+  flutter_launcher_icons: ^0.14.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -90,3 +92,13 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  #launcher_icons: per cambiare l'icona dell'applicazione
+
+  # Sezione di CONFIGURAZIONE (non è una dipendenza) letta dal pacchetto
+  # flutter_launcher_icons quando lo lanciamo con:
+  #   dart run flutter_launcher_icons
+  # Gli dice quali piattaforme generare e da quale immagine partire.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
