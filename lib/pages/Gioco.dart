@@ -34,6 +34,115 @@ class _GiocoPageState extends State<GiocoPage> {
     }
   }
 
+  // ------------------------------------------------------------
+  // Popup di conferma uscita: mostrato quando l'utente tocca la X.
+  // Due opzioni:
+  //  - "CONTINUA A GIOCARE" -> chiude il popup, resta in partita
+  //  - "ESCI"               -> torna sempre alla Home
+  // ------------------------------------------------------------
+  void _mostraConfermaUscita() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.75), // sfondo dietro al popup più scuro
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+            decoration: BoxDecoration(
+              // Sfondo scuro pieno (quasi nero/viola), non trasparente come i bottoni
+              color: const Color(0xFF150826),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.buttonBorder, width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.6),
+                  blurRadius: 24,
+                  spreadRadius: 4,
+                ),
+                BoxShadow(
+                  color: AppColors.buttonGlow.withOpacity(0.25),
+                  blurRadius: 30,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline_rounded, color: Colors.cyanAccent, size: 40),
+                const SizedBox(height: 16),
+
+                const Text(
+                  "Vuoi uscire dalla partita?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                Text(
+                  "Se esci ora, il progresso di questa partita andrà perso.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 28),
+
+                // ESCI -> bottone pieno, azione principale del popup
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonBorder,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 6,
+                      shadowColor: AppColors.buttonGlow,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(dialogContext); // chiude il popup
+                      Navigator.popUntil(context, (route) => route.isFirst); // torna alla Home
+                    },
+                    child: const Text(
+                      "ESCI",
+                      style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // CONTINUA A GIOCARE -> azione secondaria, solo testo
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext), // chiude solo il popup
+                  child: const Text(
+                    "CONTINUA A GIOCARE",
+                    style: TextStyle(
+                      color: Colors.cyanAccent,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (domande == null) {
@@ -60,13 +169,29 @@ class _GiocoPageState extends State<GiocoPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          "Domanda ${indice + 1}/${domande!.length}",
-                          style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.titleText,
-                          ),
+                        // ------------------------------------------------
+                        // RIGA SUPERIORE: contatore domanda + pulsante ESCI
+                        // ------------------------------------------------
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Text(
+                              "Domanda ${indice + 1}/${domande!.length}",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.titleText,
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              child: IconButton(
+                                icon: const Icon(Icons.close, color: Colors.white),
+                                onPressed: _mostraConfermaUscita,
+                              ),
+                            ),
+                          ],
                         ),
 
                         const SizedBox(height: 30),

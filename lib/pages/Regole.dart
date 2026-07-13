@@ -1,20 +1,6 @@
-// ============================================================
-// REGOLE.DART
-// ------------------------------------------------------------
-// Pagina che mostra il regolamento del gioco, collegata al
-// bottone REGOLE della Home.
-//
-// Contiene ENTRAMBE le versioni del regolamento (A e B), così
-// puoi confrontarle con i colleghi direttamente nell'app.
-// Quando deciderete quale tenere, basterà cancellare la sezione
-// non scelta (ti indico sotto dove inizia e finisce ciascuna).
-//
-// La pagina è "scorrevole" (ListView) perché il testo è lungo e
-// non ci starebbe tutto in una sola schermata.
-// ============================================================
-
 import 'package:flutter/material.dart';
 import 'AppColors.dart';
+import 'PageHeader.dart';
 
 class RegolePage extends StatelessWidget {
   const RegolePage({super.key});
@@ -31,50 +17,24 @@ class RegolePage extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-
-              // --------------------------------------------
-              // TITOLO DELLA PAGINA
-              // --------------------------------------------
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  'REGOLAMENTO',
-                  style: TextStyle(
-                    color: AppColors.titleText,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                  ),
+                child: PageHeader(
+                  title: 'REGOLAMENTO',
+                  fontSize: 28,
+                  letterSpacing: 2,
                 ),
               ),
-
-              // --------------------------------------------
-              // CONTENUTO SCORREVOLE
-              // --------------------------------------------
-              // Expanded + ListView = il testo può scorrere
-              // verticalmente occupando lo spazio rimanente
-              // sotto il titolo (stesso schema già usato per
-              // la lista in Classifica.dart)
-              // --------------------------------------------
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   children: const [
-
-                    // ============================================
-                    // ---- INIZIO VERSIONE A (punteggio fisso) ----
-                    // Per tenere SOLO questa versione, cancella
-                    // tutto da qui "FINE VERSIONE A" in poi, fino
-                    // a "FINE VERSIONE B".
-                    // ============================================
-
                     _SezioneTitolo('VERSIONE A — Punteggio fisso'),
 
                     _Paragrafo(
                       titolo: 'Come si inizia',
                       corpo:
                       '1. Dalla Home, premi GIOCA per accedere alla selezione della partita\n'
-                         // '2. Scegli la materia tra quelle disponibili\n'
                           '2. Scegli il livello di difficoltà (FACILE / MEDIO / DIFFICILE)\n'
                           '3. Premi START per iniziare',
                     ),
@@ -110,19 +70,9 @@ class RegolePage extends StatelessWidget {
                           '4. Il punteggio totale accumulato viene registrato in classifica',
                     ),
 
-                    // ============================================
-                    // ---- FINE VERSIONE A ----
-                    // ============================================
-
                     SizedBox(height: 12),
                     Divider(color: AppColors.buttonBorder, thickness: 1),
                     SizedBox(height: 12),
-
-                    // ============================================
-                    // ---- INIZIO VERSIONE B (punteggio scalato) ----
-                    // Per tenere SOLO questa versione, cancella
-                    // tutto da "INIZIO VERSIONE A" fino a qui sopra.
-                    // ============================================
 
                     _SezioneTitolo('VERSIONE B — Punteggio scalato per difficoltà'),
 
@@ -130,7 +80,6 @@ class RegolePage extends StatelessWidget {
                       titolo: 'Come si inizia',
                       corpo:
                       '1. Dalla Home, premi GIOCA per accedere alla selezione della partita\n'
-                          //'2. Scegli la materia tra quelle disponibili\n'
                           '2. Scegli il livello di difficoltà (FACILE / MEDIO / DIFFICILE)\n'
                           '3. Premi START per iniziare',
                     ),
@@ -167,11 +116,7 @@ class RegolePage extends StatelessWidget {
                           '4. Il punteggio totale accumulato viene registrato in classifica',
                     ),
 
-                    // ============================================
-                    // ---- FINE VERSIONE B ----
-                    // ============================================
-
-                    SizedBox(height: 24), // spazio finale in fondo alla pagina
+                    SizedBox(height: 24),
                   ],
                 ),
               ),
@@ -183,12 +128,6 @@ class RegolePage extends StatelessWidget {
   }
 }
 
-// ============================================================
-// _SezioneTitolo
-// ------------------------------------------------------------
-// Widget privato per i titoli grandi che separano le due
-// versioni del regolamento (es. "VERSIONE A — Punteggio fisso")
-// ============================================================
 class _SezioneTitolo extends StatelessWidget {
   final String testo;
 
@@ -201,7 +140,7 @@ class _SezioneTitolo extends StatelessWidget {
       child: Text(
         testo,
         style: const TextStyle(
-          color: AppColors.buttonBorder, // colore diverso per distinguerlo dal resto
+          color: AppColors.buttonBorder,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
@@ -210,14 +149,6 @@ class _SezioneTitolo extends StatelessWidget {
   }
 }
 
-// ============================================================
-// _Paragrafo
-// ------------------------------------------------------------
-// Widget privato per UN blocco di regolamento: un sottotitolo
-// (es. "Punteggio") + il testo del corpo sotto. Usato più volte
-// per evitare di ripetere lo stesso stile di formattazione per
-// ogni sezione del regolamento.
-// ============================================================
 class _Paragrafo extends StatelessWidget {
   final String titolo;
   final String corpo;
@@ -248,7 +179,7 @@ class _Paragrafo extends StatelessWidget {
             style: const TextStyle(
               color: AppColors.buttonText,
               fontSize: 14,
-              height: 1.4, // interlinea, rende il testo lungo più leggibile
+              height: 1.4,
             ),
           ),
         ],

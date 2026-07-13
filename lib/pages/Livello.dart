@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'AppColors.dart';
 import 'Gioco.dart';
+import 'PageHeader.dart';
 
 class LivelloPage extends StatefulWidget {
   const LivelloPage({super.key});
@@ -27,17 +28,8 @@ class _LivelloPageState extends State<LivelloPage> {
               children: [
                 const SizedBox(height: 20),
 
-                // TITOLO
-                const Text(
-                  "Seleziona il livello",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.titleText,
-                    letterSpacing: 1.5,
-                  ),
-                ),
+                // TITOLO + FRECCIA INDIETRO
+                const PageHeader(title: "Seleziona il livello"),
 
                 const SizedBox(height: 40),
 
