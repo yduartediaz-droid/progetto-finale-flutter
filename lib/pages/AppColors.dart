@@ -12,8 +12,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // ---- SFONDO (gradiente viola/magenta scuro) ----
-  // Il colore "in alto" del gradiente di sfondo
+
   static const Color backgroundTop = Color(0xFF1A0B2E);
   // Il colore "in basso" del gradiente di sfondo
   static const Color backgroundBottom = Color(0xFF3B0F5C);
