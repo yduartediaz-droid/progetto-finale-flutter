@@ -34,17 +34,11 @@ class _GiocoPageState extends State<GiocoPage> {
     }
   }
 
-  // ------------------------------------------------------------
-  // Popup di conferma uscita: mostrato quando l'utente tocca la X.
-  // Due opzioni:
-  //  - "CONTINUA A GIOCARE" -> chiude il popup, resta in partita
-  //  - "ESCI"               -> torna sempre alla Home
-  // ------------------------------------------------------------
   void _mostraConfermaUscita() {
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.75), // sfondo dietro al popup più scuro
+      barrierColor: Colors.black.withOpacity(0.75),
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: Colors.transparent,
@@ -52,7 +46,6 @@ class _GiocoPageState extends State<GiocoPage> {
           child: Container(
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
             decoration: BoxDecoration(
-              // Sfondo scuro pieno (quasi nero/viola), non trasparente come i bottoni
               color: const Color(0xFF150826),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: AppColors.buttonBorder, width: 1.5),
@@ -87,17 +80,16 @@ class _GiocoPageState extends State<GiocoPage> {
                 const SizedBox(height: 10),
 
                 Text(
-                  "Se esci ora, il progresso di questa partita andrà perso.",
+                  "Se esci ora, il progresso andrà perso.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white70,
                     fontSize: 14,
                     height: 1.4,
                   ),
                 ),
                 const SizedBox(height: 28),
 
-                // ESCI -> bottone pieno, azione principale del popup
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -112,8 +104,8 @@ class _GiocoPageState extends State<GiocoPage> {
                       shadowColor: AppColors.buttonGlow,
                     ),
                     onPressed: () {
-                      Navigator.pop(dialogContext); // chiude il popup
-                      Navigator.popUntil(context, (route) => route.isFirst); // torna alla Home
+                      Navigator.pop(dialogContext);
+                      Navigator.popUntil(context, (route) => route.isFirst);
                     },
                     child: const Text(
                       "ESCI",
@@ -123,9 +115,8 @@ class _GiocoPageState extends State<GiocoPage> {
                 ),
                 const SizedBox(height: 12),
 
-                // CONTINUA A GIOCARE -> azione secondaria, solo testo
                 TextButton(
-                  onPressed: () => Navigator.pop(dialogContext), // chiude solo il popup
+                  onPressed: () => Navigator.pop(dialogContext),
                   child: const Text(
                     "CONTINUA A GIOCARE",
                     style: TextStyle(
@@ -169,9 +160,6 @@ class _GiocoPageState extends State<GiocoPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // ------------------------------------------------
-                        // RIGA SUPERIORE: contatore domanda + pulsante ESCI
-                        // ------------------------------------------------
                         Stack(
                           alignment: Alignment.center,
                           children: [
@@ -179,9 +167,15 @@ class _GiocoPageState extends State<GiocoPage> {
                               "Domanda ${indice + 1}/${domande!.length}",
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                fontSize: 26,
+                                fontSize: 30,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.titleText,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.cyanAccent,
+                                    blurRadius: 20,
+                                  )
+                                ],
                               ),
                             ),
                             Positioned(
@@ -224,7 +218,7 @@ class _GiocoPageState extends State<GiocoPage> {
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: AppColors.buttonFill,
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(30),
                                   border: Border.all(
                                     color: selected
                                         ? Colors.cyanAccent
@@ -236,8 +230,8 @@ class _GiocoPageState extends State<GiocoPage> {
                                       color: selected
                                           ? Colors.cyanAccent.withOpacity(0.6)
                                           : AppColors.buttonGlow.withOpacity(0.4),
-                                      blurRadius: 14,
-                                      spreadRadius: 1,
+                                      blurRadius: 20,
+                                      spreadRadius: 2,
                                     ),
                                   ],
                                 ),
@@ -249,7 +243,7 @@ class _GiocoPageState extends State<GiocoPage> {
                                     color: selected
                                         ? Colors.cyanAccent
                                         : AppColors.buttonText,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
@@ -264,40 +258,30 @@ class _GiocoPageState extends State<GiocoPage> {
                 ),
               ),
 
-              // 🔥 PULSANTE FISSO IN BASSO — niente spazio bianco
+              /// 🔥 BOTTONE CONFERMA PIÙ PICCOLO
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),
                 child: SizedBox(
-                  height: 56,
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: 46, // più basso
+                  width: MediaQuery.of(context).size.width * 0.55, // più stretto
                   child: ElevatedButton(
-                  /*  style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonBorder,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      shadowColor: AppColors.buttonGlow,
-                      elevation: 10,
-                    ),*/
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonBorder,
+                      backgroundColor: AppColors.buttonFill,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor: AppColors.buttonBorder.withOpacity(0.25),
+                      disabledBackgroundColor: AppColors.buttonFill.withOpacity(0.25),
                       disabledForegroundColor: Colors.white.withOpacity(0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                       shadowColor: AppColors.buttonGlow,
                       elevation: 10,
+                      padding: const EdgeInsets.symmetric(vertical: 10), // meno padding
                     ),
                     onPressed: rispostaSelezionata == null
                         ? null
                         : () async {
                       final rispostaCorretta = domanda.risposte
-                          .firstWhere(
-                            (r) => r.idRisposta == rispostaSelezionata,
-                      )
+                          .firstWhere((r) => r.idRisposta == rispostaSelezionata)
                           .corretta;
 
                       if (rispostaCorretta) {
@@ -314,7 +298,6 @@ class _GiocoPageState extends State<GiocoPage> {
                             isLastQuestion: isLastQuestion,
                             risposteCorrette: risposteCorrette,
                             totaleDomande: domande!.length,
-
                           ),
                         ),
                       );
@@ -329,7 +312,7 @@ class _GiocoPageState extends State<GiocoPage> {
                     child: const Text(
                       "CONFERMA",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18, // testo più piccolo
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1,
                       ),
