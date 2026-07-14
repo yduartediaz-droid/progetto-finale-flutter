@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'AppColors.dart';
 import 'Gioco.dart';
 
+/// Pagina dove l’utente seleziona il livello.
+/// In questa versione i bottoni sono più piccoli,
+/// identici alla dimensione dei bottoni della Home.
 class LivelloPage extends StatefulWidget {
   const LivelloPage({super.key});
 
@@ -10,12 +13,14 @@ class LivelloPage extends StatefulWidget {
 }
 
 class _LivelloPageState extends State<LivelloPage> {
+  // Qui salviamo il livello selezionato (FACILE, MEDIO, DIFFICILE)
   String? livelloSelezionato;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        // Sfondo con il gradiente neon
         decoration: const BoxDecoration(
           gradient: AppColors.backgroundGradient,
         ),
@@ -25,6 +30,7 @@ class _LivelloPageState extends State<LivelloPage> {
               const SizedBox(height: 20),
 
               // 🔙 FRECCIA INDIETRO
+              // Permette di tornare alla pagina precedente
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
@@ -37,24 +43,29 @@ class _LivelloPageState extends State<LivelloPage> {
 
               const SizedBox(height: 10),
 
-              // 🔠 TITOLO IDENTICO ALLA HOME
+              // 🔠 TITOLO DELLA PAGINA
+              // Ridotto leggermente per evitare scavalcamenti
               const Text(
                 "Seleziona il livello",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 36,
+                  fontSize: 32, // più piccolo per stare bene su tutti i telefoni
                   fontWeight: FontWeight.bold,
                 ),
               ),
 
               const SizedBox(height: 40),
 
-              // ⭐ BOTTONI NEON IDENTICI ALLA HOME
+              // ⭐ BOTTONI NEON PIÙ PICCOLI (come la Home)
+              // FACILE
               _NeonButton(
                 label: "FACILE",
                 selected: livelloSelezionato == "FACILE",
                 onTap: () {
+                  // Salviamo il livello selezionato
                   setState(() => livelloSelezionato = "FACILE");
+
+                  // Apriamo la pagina del gioco con il livello scelto
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -64,11 +75,13 @@ class _LivelloPageState extends State<LivelloPage> {
                 },
               ),
 
+              // MEDIO
               _NeonButton(
                 label: "MEDIO",
                 selected: livelloSelezionato == "MEDIO",
                 onTap: () {
                   setState(() => livelloSelezionato = "MEDIO");
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -78,11 +91,13 @@ class _LivelloPageState extends State<LivelloPage> {
                 },
               ),
 
+              // DIFFICILE
               _NeonButton(
                 label: "DIFFICILE",
                 selected: livelloSelezionato == "DIFFICILE",
                 onTap: () {
                   setState(() => livelloSelezionato = "DIFFICILE");
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -99,13 +114,15 @@ class _LivelloPageState extends State<LivelloPage> {
   }
 }
 
-// ------------------------------------------------------------
-// ⭐ BOTTONI NEON IDENTICI ALLA HOME
-// ------------------------------------------------------------
+/// ------------------------------------------------------------
+/// ⭐ BOTTONI NEON PIÙ PICCOLI (identici alla Home)
+/// ------------------------------------------------------------
+/// Questo widget crea un bottone neon con glow.
+/// È identico ai bottoni della Home, ma con dimensioni ridotte.
 class _NeonButton extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
+  final String label;      // Testo del bottone (FACILE, MEDIO, DIFFICILE)
+  final bool selected;     // Se il bottone è selezionato cambia colore
+  final VoidCallback onTap; // Funzione chiamata quando premi il bottone
 
   const _NeonButton({
     required this.label,
@@ -116,14 +133,22 @@ class _NeonButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12),
+      width: 260,   // 🔥 larghezza ridotta (come i bottoni della Home)
+      height: 56,   // 🔥 altezza ridotta (come i bottoni della Home)
+      margin: const EdgeInsets.symmetric(vertical: 10),
+
+      // Stile neon del bottone
       decoration: BoxDecoration(
         color: AppColors.buttonFill,
         borderRadius: BorderRadius.circular(30),
+
+        // Bordo che diventa ciano quando selezionato
         border: Border.all(
           color: selected ? Colors.cyanAccent : AppColors.buttonBorder,
           width: 2,
         ),
+
+        // Glow neon
         boxShadow: [
           BoxShadow(
             color: selected
@@ -134,20 +159,20 @@ class _NeonButton extends StatelessWidget {
           ),
         ],
       ),
+
+      // InkWell permette l’effetto “tap”
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(30),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: selected ? Colors.cyanAccent : Colors.white,
-                letterSpacing: 1,
-              ),
+
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 18, // 🔥 testo più piccolo
+              fontWeight: FontWeight.bold,
+              color: selected ? Colors.cyanAccent : Colors.white,
+              letterSpacing: 1,
             ),
           ),
         ),
