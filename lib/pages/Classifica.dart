@@ -1,41 +1,9 @@
-// ============================================================
-// CLASSIFICA.DART
-// ------------------------------------------------------------
-// Ora la classifica è divisa per livello: l'utente sceglie
-// FACILE / MEDIO / DIFFICILE con i 3 bottoni in alto, e sotto
-// vede solo i giocatori che hanno giocato a quel livello,
-// ordinati dal punteggio più alto al più basso.
-//
-// I dati sono ancora FINTI (vedi "DATI DI ESEMPIO" più sotto).
-// Quando collegherai il backend Spring Boot, ogni giocatore
-// dovrà arrivare già con il campo "livello" valorizzato
-// (es. "FACILE", "MEDIO" o "DIFFICILE").
-// ============================================================
-
 import 'package:flutter/material.dart';
 import 'AppColors.dart';
 import 'PageHeader.dart';
+import '../services/ClassificaService.dart';
+import '../models/punteggioResponse.dart';
 
-// ------------------------------------------------------------
-// MODELLO DATI
-// ------------------------------------------------------------
-class Giocatore {
-  final String nome;
-  final int punteggio;
-  final String livello; // "FACILE" | "MEDIO" | "DIFFICILE"
-
-  const Giocatore({
-    required this.nome,
-    required this.punteggio,
-    required this.livello,
-  });
-}
-
-// ------------------------------------------------------------
-// Ora StatefulWidget perché dobbiamo "ricordare" quale livello
-// è selezionato (parte da FACILE) e aggiornare la lista quando
-// l'utente tocca un altro bottone.
-// ------------------------------------------------------------
 class ClassificaPage extends StatefulWidget {
   const ClassificaPage({super.key});
 
@@ -44,39 +12,33 @@ class ClassificaPage extends StatefulWidget {
 }
 
 class _ClassificaPageState extends State<ClassificaPage> {
-  String livelloSelezionato = "FACILE"; // livello mostrato di default all'apertura
+  String livelloSelezionato = "FACILE";
 
-  // ----------------------------------------------------------
-  // DATI (per ora vuoti: nessun nome finto)
-  // ----------------------------------------------------------
-  // Quando collegherai il backend Spring Boot, questa lista
-  // andrà sostituita con i giocatori veri presi dall'API
-  // (ognuno con nome, punteggio e livello).
-  // ----------------------------------------------------------
-  static const List<Giocatore> _datiFinti = [];
+  late Future<List<PunteggioResponse>> futureClassifica;
+
+  @override
+  void initState() {
+    super.initState();
+    futureClassifica = ClassificaService.getClassifica(livelloSelezionato);
+  }
+
+  void _cambiaLivello(String nuovoLivello) {
+    setState(() {
+      livelloSelezionato = nuovoLivello;
+      futureClassifica = ClassificaService.getClassifica(nuovoLivello);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Filtra solo i giocatori del livello selezionato, poi ordina
-    // dal punteggio più alto al più basso.
-    final List<Giocatore> classificaFiltrata = _datiFinti
-        .where((g) => g.livello == livelloSelezionato)
-        .toList()
-      ..sort((a, b) => b.punteggio - a.punteggio);
-
     return Scaffold(
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: AppColors.backgroundGradient,
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // ------------------------------------------------
-              // TITOLO DELLA PAGINA + FRECCIA INDIETRO
-              // ------------------------------------------------
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
                 child: PageHeader(
@@ -86,9 +48,6 @@ class _ClassificaPageState extends State<ClassificaPage> {
                 ),
               ),
 
-              // ------------------------------------------------
-              // 3 BOTTONI: FACILE / MEDIO / DIFFICILE
-              // ------------------------------------------------
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
@@ -97,7 +56,7 @@ class _ClassificaPageState extends State<ClassificaPage> {
                       child: _FiltroLivelloButton(
                         label: "FACILE",
                         selected: livelloSelezionato == "FACILE",
-                        onTap: () => setState(() => livelloSelezionato = "FACILE"),
+                        onTap: () => _cambiaLivello("FACILE"),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -105,7 +64,7 @@ class _ClassificaPageState extends State<ClassificaPage> {
                       child: _FiltroLivelloButton(
                         label: "MEDIO",
                         selected: livelloSelezionato == "MEDIO",
-                        onTap: () => setState(() => livelloSelezionato = "MEDIO"),
+                        onTap: () => _cambiaLivello("MEDIO"),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -113,7 +72,7 @@ class _ClassificaPageState extends State<ClassificaPage> {
                       child: _FiltroLivelloButton(
                         label: "DIFFICILE",
                         selected: livelloSelezionato == "DIFFICILE",
-                        onTap: () => setState(() => livelloSelezionato = "DIFFICILE"),
+                        onTap: () => _cambiaLivello("DIFFICILE"),
                       ),
                     ),
                   ],
@@ -122,29 +81,41 @@ class _ClassificaPageState extends State<ClassificaPage> {
 
               const SizedBox(height: 20),
 
-              // ------------------------------------------------
-              // LISTA DEI GIOCATORI DEL LIVELLO SELEZIONATO
-              // ------------------------------------------------
               Expanded(
-                child: classificaFiltrata.isEmpty
-                    ? const Center(
-                  child: Text(
-                    "Nessun punteggio ancora registrato\nper questo livello.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
-                )
-                    : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  itemCount: classificaFiltrata.length,
-                  itemBuilder: (context, index) {
-                    final Giocatore giocatore = classificaFiltrata[index];
-                    final int posizione = index + 1;
+                child: FutureBuilder<List<PunteggioResponse>>(
+                  future: futureClassifica,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: Colors.cyanAccent),
+                      );
+                    }
 
-                    return _RigaClassifica(
-                      posizione: posizione,
-                      nome: giocatore.nome,
-                      punteggio: giocatore.punteggio,
+                    final classifica = snapshot.data!;
+
+                    if (classifica.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "Nessun punteggio ancora registrato\nper questo livello.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      itemCount: classifica.length,
+                      itemBuilder: (context, index) {
+                        final p = classifica[index];
+                        final posizione = index + 1;
+
+                        return _RigaClassifica(
+                          posizione: posizione,
+                          nome: p.username,
+                          punteggio: p.punteggioFinale,
+                        );
+                      },
                     );
                   },
                 ),
@@ -157,13 +128,6 @@ class _ClassificaPageState extends State<ClassificaPage> {
   }
 }
 
-// ============================================================
-// _FiltroLivelloButton
-// ------------------------------------------------------------
-// Bottone piccolo "a pillola" per scegliere il livello da
-// visualizzare in classifica. Stesso stile cyan/viola degli
-// altri bottoni dell'app, ma pensato per stare 3 in fila.
-// ============================================================
 class _FiltroLivelloButton extends StatelessWidget {
   final String label;
   final bool selected;
@@ -222,12 +186,6 @@ class _FiltroLivelloButton extends StatelessWidget {
   }
 }
 
-// ============================================================
-// _RigaClassifica
-// ------------------------------------------------------------
-// Widget "privato" (usato solo in questo file) che rappresenta
-// UNA singola riga della classifica: posizione + nome + punteggio.
-// ============================================================
 class _RigaClassifica extends StatelessWidget {
   final int posizione;
   final String nome;
