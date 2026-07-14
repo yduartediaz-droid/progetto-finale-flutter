@@ -7,7 +7,7 @@ class ClassificaService {
   static String get baseUrl {
     return kIsWeb
         ? "http://localhost:8080/api/punteggi"
-        : "http://10.0.2.2:8080/api/punteggi";
+        : "http://10.10.93.2:8080/api/punteggi";//ex 10.0.2.2
   }
 
   static Future<List<PunteggioResponse>> getClassifica(String livello) async {

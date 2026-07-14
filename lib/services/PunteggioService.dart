@@ -6,7 +6,7 @@ class PunteggioService {
   static String get baseUrl {
     return kIsWeb
         ? "http://localhost:8080/api/punteggi"
-        : "http://10.0.2.2:8080/api/punteggi";
+        : "http://10.10.93.2:8080/api/punteggi";
   }
 
   static Future<void> salvaPunteggio({

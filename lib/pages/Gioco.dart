@@ -207,6 +207,21 @@ class _GiocoPageState extends State<GiocoPage> {
                           children: domanda.risposte.map((r) {
                             final selected = rispostaSelezionata == r.idRisposta;
 
+                            // ------------------------------------------------------
+                            // LAYOUT RESPONSIVE
+                            // --------------------------------------------------------
+                            // Schermo stretto (telefono, sotto i 600px) -> ogni
+                            // risposta occupa quasi tutta la larghezza -> una sotto
+                            // l'altra. Schermo largo (Chrome/desktop) -> due per riga,
+                            // come funzionava già bene sul web.
+                            // --------------------------------------------------------
+                            final larghezzaSchermo = MediaQuery.of(context).size.width;
+                            final isSchermoStretto = larghezzaSchermo < 600;
+
+                            final larghezzaRisposta = isSchermoStretto
+                                ? larghezzaSchermo - 48
+                                : (larghezzaSchermo - 80) / 2;
+
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -214,7 +229,7 @@ class _GiocoPageState extends State<GiocoPage> {
                                 });
                               },
                               child: Container(
-                                width: (MediaQuery.of(context).size.width - 80) / 2,
+                                width: larghezzaRisposta,
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: AppColors.buttonFill,
