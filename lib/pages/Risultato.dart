@@ -33,7 +33,6 @@ class RisultatoPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
 
-                // TITOLO CORRETTA / SBAGLIATA
                 Text(
                   isWin ? "RISPOSTA CORRETTA!" : "RISPOSTA SBAGLIATA!",
                   style: TextStyle(
@@ -51,7 +50,6 @@ class RisultatoPage extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-// CURIOSITÀ MOSTRATA DIRETTAMENTE (niente più bottone/popup)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Column(
@@ -78,18 +76,17 @@ class RisultatoPage extends StatelessWidget {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 20),
 
-                // SE NON È L’ULTIMA DOMANDA → MOSTRA "PROSSIMA DOMANDA"
                 if (!isLastQuestion)
                   _NeonButton(
                     label: "PROSSIMA DOMANDA",
                     onTap: () {
-                      Navigator.pop(context, true); // torna alla GiocoPage
+                      Navigator.pop(context, true);
                     },
                   ),
 
-                // SE È L’ULTIMA DOMANDA → MOSTRA SOLO "FINE QUIZ"
                 if (isLastQuestion) ...[
                   const SizedBox(height: 40),
 
@@ -102,6 +99,7 @@ class RisultatoPage extends StatelessWidget {
                           builder: (_) => RisultatoFinale(
                             risposteCorrette: risposteCorrette,
                             totaleDomande: totaleDomande,
+                            livello: livello, // 🔥 AGGIUNTO
                           ),
                         ),
                       );

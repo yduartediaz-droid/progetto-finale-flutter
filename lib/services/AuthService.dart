@@ -12,7 +12,7 @@ class AuthService {
     }
 
     // Android/iOS emulator → 10.0.2.2
-    return "http://10.0.2.2:8080/api/auth";
+    return "http://10.10.93.2:8080/api/auth";// ex 10.0.2.2
   }
 
   /// LOGIN
