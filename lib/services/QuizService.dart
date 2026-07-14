@@ -8,7 +8,7 @@ class QuizService {
     if (kIsWeb) {
       return "http://localhost:8080/api/domande";
     } else {
-      return "http://10.0.2.2:8080/api/domande";
+      return "http://10.10.93.2:8080/api/domande";//10.0.2.2 per utilizzare il telefono mettere ip computer wi fi
     }
   }
 
