@@ -12,13 +12,67 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  bool isLogin = true; // 🔥 Toggle login/registrazione
+  bool isLogin = true;
 
   final usernameCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
 
   bool loading = false;
   String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAutoLogin(); // 🔥 controllo login persistente
+  }
+
+  Future<void> _checkAutoLogin() async {
+    final loggedIn = await UserStorage.isLoggedIn();
+    if (loggedIn) {
+      // 🔥 Utente già loggato → salto AuthPage
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    }
+  }
+
+  Future<void> _submit() async {
+    setState(() {
+      loading = true;
+      error = null;
+    });
+
+    try {
+      final username = usernameCtrl.text.trim();
+      final password = passwordCtrl.text.trim();
+
+      if (username.isEmpty || password.isEmpty) {
+        throw Exception("Inserisci username e password");
+      }
+
+      final res = isLogin
+          ? await AuthService.login(username, password)
+          : await AuthService.register(username, password);
+
+      await UserStorage.saveUser(res.idUtente, res.username);
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+      });
+    }
+
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,44 +137,7 @@ class _AuthPageState extends State<AuthPage> {
                 const SizedBox(height: 40),
 
                 ElevatedButton(
-                  onPressed: loading
-                      ? null
-                      : () async {
-                    setState(() {
-                      loading = true;
-                      error = null;
-                    });
-
-                    try {
-                      final res = isLogin
-                          ? await AuthService.login(
-                        usernameCtrl.text.trim(),
-                        passwordCtrl.text.trim(),
-                      )
-                          : await AuthService.register(
-                        usernameCtrl.text.trim(),
-                        passwordCtrl.text.trim(),
-                      );
-
-                      await UserStorage.saveUser(
-                        res.idUtente,
-                        res.username,
-                      );
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const HomePage()),
-                      );
-                    } catch (e) {
-                      setState(() {
-                        error = e.toString();
-                      });
-                    }
-
-                    setState(() {
-                      loading = false;
-                    });
-                  },
+                  onPressed: loading ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.buttonBorder,
                     foregroundColor: Colors.white,
@@ -129,9 +146,9 @@ class _AuthPageState extends State<AuthPage> {
                   child: loading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                    isLogin ? "ACCEDI" : "REGISTRATI",
-                    style: const TextStyle(fontSize: 20),
-                  ),
+                          isLogin ? "ACCEDI" : "REGISTRATI",
+                          style: const TextStyle(fontSize: 20),
+                        ),
                 ),
 
                 const SizedBox(height: 20),
