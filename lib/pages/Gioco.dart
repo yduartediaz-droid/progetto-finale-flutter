@@ -4,11 +4,8 @@ import '../services/QuizService.dart';
 import 'Risultato.dart';
 import 'AppColors.dart';
 
-/// Pagina del quiz.
-/// Qui viene gestita la logica delle domande, risposte, avanzamento
-/// e stile neon uniforme.
 class GiocoPage extends StatefulWidget {
-  final String livello; // livello scelto dall’utente (es. facile, medio, difficile)
+  final String livello;
 
   const GiocoPage({super.key, required this.livello});
 
@@ -17,33 +14,31 @@ class GiocoPage extends StatefulWidget {
 }
 
 class _GiocoPageState extends State<GiocoPage> {
-  List<Domanda>? domande; // lista delle domande caricate dal backend
-  int indice = 0; // indice della domanda corrente
-  int? rispostaSelezionata; // id della risposta selezionata dall’utente
-  int risposteCorrette = 0; // contatore risposte corrette
+  List<Domanda>? domande;
+  int indice = 0;
+  int? rispostaSelezionata;
+  int risposteCorrette = 0;
 
   @override
   void initState() {
     super.initState();
-    _caricaDomande(); // carica le domande appena la pagina viene aperta
+    _caricaDomande();
   }
 
-  /// Carica le domande dal servizio QuizService
   Future<void> _caricaDomande() async {
     try {
       domande = await QuizService.getDomandeByLivello(widget.livello);
-      setState(() {}); // aggiorna la UI
+      setState(() {});
     } catch (e) {
       debugPrint("Errore nel caricamento domande: $e");
     }
   }
 
-  /// Popup di conferma uscita dal quiz
   void _mostraConfermaUscita() {
     showDialog(
       context: context,
-      barrierDismissible: true, // permette chiusura cliccando fuori
-      barrierColor: Colors.black.withOpacity(0.75), // sfondo scuro
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.75),
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: Colors.transparent,
@@ -51,7 +46,7 @@ class _GiocoPageState extends State<GiocoPage> {
           child: Container(
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
             decoration: BoxDecoration(
-              color: const Color(0xFF150826), // colore neon scuro
+              color: const Color(0xFF150826),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: AppColors.buttonBorder, width: 1.5),
               boxShadow: [
@@ -70,8 +65,7 @@ class _GiocoPageState extends State<GiocoPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.error_outline_rounded,
-                    color: Colors.cyanAccent, size: 40),
+                const Icon(Icons.error_outline_rounded, color: Colors.cyanAccent, size: 40),
                 const SizedBox(height: 16),
 
                 const Text(
@@ -83,7 +77,6 @@ class _GiocoPageState extends State<GiocoPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 10),
 
                 Text(
@@ -95,10 +88,8 @@ class _GiocoPageState extends State<GiocoPage> {
                     height: 1.4,
                   ),
                 ),
-
                 const SizedBox(height: 28),
 
-                // Bottone ESCI
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -113,23 +104,17 @@ class _GiocoPageState extends State<GiocoPage> {
                       shadowColor: AppColors.buttonGlow,
                     ),
                     onPressed: () {
-                      Navigator.pop(dialogContext); // chiude popup
+                      Navigator.pop(dialogContext);
                       Navigator.popUntil(context, (route) => route.isFirst);
-                      // torna alla home
                     },
                     child: const Text(
                       "ESCI",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
 
-                // Bottone continua
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext),
                   child: const Text(
@@ -151,33 +136,30 @@ class _GiocoPageState extends State<GiocoPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Se le domande non sono ancora state caricate → mostra caricamento
     if (domande == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    final domanda = domande![indice]; // domanda corrente
-    final isLastQuestion = indice == domande!.length - 1; // ultima domanda?
+    final domanda = domande![indice];
+    final isLastQuestion = indice == domande!.length - 1;
 
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppColors.backgroundGradient, // sfondo neon
+          gradient: AppColors.backgroundGradient,
         ),
         child: SafeArea(
           child: Column(
             children: [
               Expanded(
                 child: Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        /// TITOLO NEON (Domanda X/Y)
                         Stack(
                           alignment: Alignment.center,
                           children: [
@@ -196,13 +178,10 @@ class _GiocoPageState extends State<GiocoPage> {
                                 ],
                               ),
                             ),
-
-                            // Bottone X per uscire
                             Positioned(
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close,
-                                    color: Colors.white),
+                                icon: const Icon(Icons.close, color: Colors.white),
                                 onPressed: _mostraConfermaUscita,
                               ),
                             ),
@@ -211,7 +190,6 @@ class _GiocoPageState extends State<GiocoPage> {
 
                         const SizedBox(height: 30),
 
-                        /// Testo della domanda
                         Text(
                           domanda.testo,
                           style: const TextStyle(
@@ -223,13 +201,11 @@ class _GiocoPageState extends State<GiocoPage> {
 
                         const SizedBox(height: 40),
 
-                        /// RISPOSTE — stile neon
                         Wrap(
                           spacing: 16,
                           runSpacing: 16,
                           children: domanda.risposte.map((r) {
-                            final selected =
-                                rispostaSelezionata == r.idRisposta;
+                            final selected = rispostaSelezionata == r.idRisposta;
 
                             return GestureDetector(
                               onTap: () {
@@ -238,9 +214,7 @@ class _GiocoPageState extends State<GiocoPage> {
                                 });
                               },
                               child: Container(
-                                width:
-                                (MediaQuery.of(context).size.width - 80) /
-                                    2, // 2 colonne
+                                width: (MediaQuery.of(context).size.width - 80) / 2,
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: AppColors.buttonFill,
@@ -255,8 +229,7 @@ class _GiocoPageState extends State<GiocoPage> {
                                     BoxShadow(
                                       color: selected
                                           ? Colors.cyanAccent.withOpacity(0.6)
-                                          : AppColors.buttonGlow
-                                          .withOpacity(0.4),
+                                          : AppColors.buttonGlow.withOpacity(0.4),
                                       blurRadius: 20,
                                       spreadRadius: 2,
                                     ),
@@ -285,42 +258,36 @@ class _GiocoPageState extends State<GiocoPage> {
                 ),
               ),
 
-              /// PULSANTE CONFERMA — stile neon
+              /// 🔥 BOTTONE CONFERMA PIÙ PICCOLO
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),
                 child: SizedBox(
-                  height: 56,
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: 46, // più basso
+                  width: MediaQuery.of(context).size.width * 0.55, // più stretto
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.buttonBorder,
+                      backgroundColor: AppColors.buttonFill,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                      AppColors.buttonBorder.withOpacity(0.25),
-                      disabledForegroundColor:
-                      Colors.white.withOpacity(0.5),
+                      disabledBackgroundColor: AppColors.buttonFill.withOpacity(0.25),
+                      disabledForegroundColor: Colors.white.withOpacity(0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                       shadowColor: AppColors.buttonGlow,
                       elevation: 10,
+                      padding: const EdgeInsets.symmetric(vertical: 10), // meno padding
                     ),
-
-                    /// Logica del pulsante CONFERMA
                     onPressed: rispostaSelezionata == null
-                        ? null // disabilitato se non selezioni una risposta
+                        ? null
                         : () async {
-                      // Controlla se la risposta è corretta
                       final rispostaCorretta = domanda.risposte
-                          .firstWhere((r) =>
-                      r.idRisposta == rispostaSelezionata)
+                          .firstWhere((r) => r.idRisposta == rispostaSelezionata)
                           .corretta;
 
                       if (rispostaCorretta) {
-                        risposteCorrette++; // incrementa punteggio
+                        risposteCorrette++;
                       }
 
-                      // Vai alla pagina risultato
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -335,19 +302,17 @@ class _GiocoPageState extends State<GiocoPage> {
                         ),
                       );
 
-                      // Se l’utente torna e NON è l’ultima domanda → passa alla successiva
                       if (result == true && !isLastQuestion) {
                         setState(() {
                           indice++;
-                          rispostaSelezionata = null; // reset selezione
+                          rispostaSelezionata = null;
                         });
                       }
                     },
-
                     child: const Text(
                       "CONFERMA",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18, // testo più piccolo
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1,
                       ),
