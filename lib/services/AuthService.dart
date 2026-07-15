@@ -11,8 +11,8 @@ class AuthService {
       return "http://localhost:8080/api/auth";
     }
 
-    // Android/iOS emulator → 10.0.2.2
-    return "http://10.0.2.2:8080/api/auth";
+    // Android/iOS emulator o dispositivo fisico in rete locale
+    return "http://10.10.93.2:8080/api/auth";
   }
 
   /// LOGIN
@@ -29,9 +29,14 @@ class AuthService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-        "Errore login (${response.statusCode}): ${response.body}",
-      );
+      // Proviamo a estrarre il messaggio di errore personalizzato inviato dal Controller Spring Boot
+      try {
+        final errorData = jsonDecode(response.body);
+        throw errorData["error"] ?? "Errore di autenticazione";
+      } catch (e) {
+        if (e is String) rethrow; // Se abbiamo già lanciato la stringa corretta, propagala
+        throw "Errore del server (${response.statusCode})";
+      }
     }
 
     return LoginResponse.fromJson(jsonDecode(response.body));
@@ -51,9 +56,14 @@ class AuthService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-        "Errore registrazione (${response.statusCode}): ${response.body}",
-      );
+      // Proviamo a estrarre il messaggio di errore personalizzato inviato dal Controller Spring Boot
+      try {
+        final errorData = jsonDecode(response.body);
+        throw errorData["error"] ?? "Errore di registrazione";
+      } catch (e) {
+        if (e is String) rethrow; // Se abbiamo già lanciato la stringa corretta, propagala
+        throw "Errore del server (${response.statusCode})";
+      }
     }
 
     return LoginResponse.fromJson(jsonDecode(response.body));

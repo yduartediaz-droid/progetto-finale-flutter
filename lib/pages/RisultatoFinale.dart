@@ -2,20 +2,39 @@ import 'package:flutter/material.dart';
 import 'AppColors.dart';
 import 'Home.dart';
 import 'Classifica.dart';
+import '../storage/UserStorage.dart';
+import '../services/PunteggioService.dart';
 
 class RisultatoFinale extends StatelessWidget {
   final int risposteCorrette;
   final int totaleDomande;
+  final String livello;
 
   const RisultatoFinale({
     super.key,
     required this.risposteCorrette,
     required this.totaleDomande,
+    required this.livello,
   });
+
+  Future<void> _salvaPunteggio() async {
+    final userId = await UserStorage.getUserId();
+    if (userId == null) return;
+
+    final int punteggioFinale = risposteCorrette * 10;
+
+    await PunteggioService.salvaPunteggio(
+      idUtente: userId,
+      livello: livello,
+      punteggioFinale: punteggioFinale,
+      risposteCorrette: risposteCorrette,
+      totaleDomande: totaleDomande,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final int punteggio = risposteCorrette * 10;
+    final int punteggioFinale = risposteCorrette * 10;
 
     return Scaffold(
       body: Container(
@@ -66,7 +85,7 @@ class RisultatoFinale extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 Text(
-                  "Punteggio: $punteggio",
+                  "Punteggio: $punteggioFinale",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 26,
@@ -75,23 +94,28 @@ class RisultatoFinale extends StatelessWidget {
 
                 const SizedBox(height: 50),
 
+                // 🔥 POST + HOME
                 _NeonButton(
                   label: "TORNA ALLA HOME",
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    await _salvaPunteggio();
+
+                    Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const HomePage(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const HomePage()),
+                      (route) => false,
                     );
                   },
                 ),
 
                 const SizedBox(height: 20),
 
+                // 🔥 POST + CLASSIFICA
                 _NeonButton(
                   label: "VEDI CLASSIFICA",
-                  onTap: () {
+                  onTap: () async {
+                    await _salvaPunteggio();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -7,6 +7,13 @@ class UserStorage {
     await prefs.setString("username", username);
   }
 
+  // 🔥 AGGIUNGI QUESTO METODO:
+  static Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Restituisce true se l'ID utente è presente, altrimenti false
+    return prefs.containsKey("idUtente");
+  }
+
   static Future<int?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt("idUtente");
